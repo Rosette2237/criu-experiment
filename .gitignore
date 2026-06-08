@@ -1,5 +1,3 @@
-# criu-experiment/.gitignore
-
 # Build artifacts
 build/
 *.o

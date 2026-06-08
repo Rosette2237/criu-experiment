@@ -1,5 +1,3 @@
-# criu-experiment/Makefile
-
 SHELL := /bin/bash
 
 # Compiler settings
