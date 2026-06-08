@@ -1,0 +1,70 @@
+# criu-experiment/.gitignore
+
+# Build artifacts
+build/
+*.o
+*.obj
+*.so
+*.a
+*.out
+*.exe
+
+# CUDA generated files
+*.ptx
+*.cubin
+*.fatbin
+*.sass
+*.nsys-rep
+*.qdrep
+*.nvvp
+
+# Runtime logs
+*.log
+*.err
+*.out
+*.pid
+
+# Experiment result outputs
+results/raw/*
+results/parsed/*
+results/logs/*
+results/figures/*
+
+# Keep result directory structure
+!results/raw/.gitkeep
+!results/parsed/.gitkeep
+!results/logs/.gitkeep
+!results/figures/.gitkeep
+
+# CRIU checkpoint images
+checkpoint-images/*
+!checkpoint-images/.gitkeep
+
+# Temporary run state
+tmp/
+run/
+*.ready
+*.progress
+*.done
+*.json.tmp
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Local environment overrides
+*.local.env
+.env
