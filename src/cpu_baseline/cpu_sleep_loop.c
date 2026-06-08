@@ -1,5 +1,3 @@
-// criu-experiment/src/cpu_baseline/cpu_sleep_loop.c
-
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L
 #endif
