@@ -42,3 +42,62 @@ Run the experiments in this order:
 ./scripts/04_run_cuda_checkpoint_restore.sh
 ./scripts/05_run_matrix_sweep.sh
 ./scripts/06_collect_results.sh
+```
+
+The CPU-only CRIU baseline should pass before trying the CUDA checkpoint/restore experiment.
+
+## Build
+```bash
+make all
+```
+
+To build only the CUDA benchmark:
+```bash
+make cuda
+```
+
+To build only the CPU CRIU baseline benchmark:
+```bash
+make cpu
+```
+
+## Output directories
+Runtime outputs are written under:
+```bash
+results/
+checkpoint-images/
+```
+
+These directories are intentionally ignored by Git except for `.gitkeep` placeholder files.
+
+A typical run will produce files like:
+```bash
+results/raw/<run-id>/env.json
+results/raw/<run-id>/cuda_baseline.json
+results/raw/<run-id>/checkpoint_restore.json
+results/raw/<run-id>/criu_dump.log
+results/raw/<run-id>/criu_restore.log
+results/raw/<run-id>/cuda_program_stdout.log
+results/raw/<run-id>/cuda_program_stderr.log
+results/raw/<run-id>/checkpoint_size.txt
+```
+
+### Useful commands:
+```bash
+nvidia-smi
+nvcc --version
+criu --version
+criu check
+which cuda-checkpoint
+```
+
+## Clean generated files
+Remove build artifacts:
+```bash
+make clean
+```
+
+Remove build artifacts, result files, and checkpoint images:
+```bash
+make distclean
+```
