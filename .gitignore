@@ -1,0 +1,38 @@
+# Build artifacts
+build/
+*.o
+*.obj
+*.so
+*.a
+*.out
+*.exe
+
+# CUDA generated files
+*.ptx
+*.cubin
+*.fatbin
+*.sass
+*.nsys-rep
+*.qdrep
+*.nvvp
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Local environment overrides
+*.local.env
+.env
