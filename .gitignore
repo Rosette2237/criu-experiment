@@ -1,11 +1,17 @@
 # Build artifacts
 build/
+checkpoints/
 *.o
 *.obj
 *.so
 *.a
 *.out
 *.exe
+*.img
+*.tar
+*.tar.gz
+*.tar.zst
+core
 
 # CUDA generated files
 *.ptx
