@@ -23,6 +23,7 @@ make
   --iters 0 \
   --extra-mb "$CPU_EXTRA_MB" \
   --csv "$APP_CSV" \
+  </dev/null \
   > "results/${RUN_ID}.stdout" \
   2> "results/${RUN_ID}.stderr" &
 
@@ -35,17 +36,14 @@ $SUDO criu dump \
   --shell-job \
   --tree "$PID" \
   --images-dir "$CKPT_DIR" \
-  --manage-cgroups ignore \
   -v4 \
   -o dump.log
 DUMP_END_NS="$(date +%s%N)"
 
 RESTORE_START_NS="$(date +%s%N)"
 $SUDO criu restore \
-  --shell-job \
   --restore-detached \
   --images-dir "$CKPT_DIR" \
-  --manage-cgroups ignore \
   -v4 \
   -o restore.log
 RESTORE_END_NS="$(date +%s%N)"
