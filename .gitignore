@@ -42,3 +42,6 @@ env/
 # Local environment overrides
 *.local.env
 .env
+
+# Experiment data
+results/
