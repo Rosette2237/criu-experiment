@@ -19,4 +19,4 @@ $(BUILD_DIR)/gpu_matmul: src/gpu_matmul.cu | $(BUILD_DIR)
 	$(NVCC) $(NVCCFLAGS) $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) results checkpoints
+	rm -rf $(BUILD_DIR) results

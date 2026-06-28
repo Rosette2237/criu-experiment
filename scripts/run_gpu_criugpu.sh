@@ -12,7 +12,7 @@ PRE_SECONDS="${PRE_SECONDS:-10}"
 POST_SECONDS="${POST_SECONDS:-10}"
 
 RUN_ID="gpu_$(echo "$GPUS" | tr ',' '-')_$(date +%Y%m%d_%H%M%S)"
-CKPT_DIR="checkpoints/$RUN_ID"
+CKPT_DIR="$HOME/criu-checkpoints/$RUN_ID"
 APP_CSV="results/${RUN_ID}_app.csv"
 METRICS_CSV="results/gpu_criugpu_metrics.csv"
 

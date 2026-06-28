@@ -11,7 +11,7 @@ PRE_SECONDS="${PRE_SECONDS:-8}"
 POST_SECONDS="${POST_SECONDS:-8}"
 
 RUN_ID="cpu_$(date +%Y%m%d_%H%M%S)"
-CKPT_DIR="checkpoints/$RUN_ID"
+CKPT_DIR="$HOME/criu-checkpoints/$RUN_ID"
 APP_CSV="results/${RUN_ID}_app.csv"
 METRICS_CSV="results/cpu_criu_metrics.csv"
 
