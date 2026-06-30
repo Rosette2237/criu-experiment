@@ -13,7 +13,11 @@ GPUS="${GPUS:-0,1,2}"
 PRE_SECONDS="${PRE_SECONDS:-10}"
 POST_SECONDS="${POST_SECONDS:-10}"
 
-RUN_ID="gpu_$(echo "$GPUS" | tr ',' '-')_$(date +%Y%m%d_%H%M%S)"
+# Dash-joined GPU list (e.g. "0-1") for use in the run_id and the metrics CSV.
+# The raw comma-separated $GPUS must never go into the CSV unquoted, or its
+# embedded comma splits into extra columns and misaligns every later field.
+GPUS_CSV="${GPUS//,/-}"
+RUN_ID="gpu_${GPUS_CSV}_$(date +%Y%m%d_%H%M%S)"
 CKPT_DIR="$HOME/criu-checkpoints/$RUN_ID"
 APP_CSV="results/${RUN_ID}_app.csv"
 METRICS_CSV="results/gpu_criugpu_metrics.csv"
@@ -84,7 +88,7 @@ if [[ ! -f "$METRICS_CSV" ]]; then
   echo "run_id,mode,gpus,n,extra_mb,dump_wall_s,restore_wall_s,checkpoint_bytes,app_csv,ckpt_dir" > "$METRICS_CSV"
 fi
 
-echo "$RUN_ID,gpu_criugpu,$GPUS,$N,$GPU_EXTRA_MB,$DUMP_S,$RESTORE_S,$CKPT_BYTES,$APP_CSV,$CKPT_DIR" >> "$METRICS_CSV"
+echo "$RUN_ID,gpu_criugpu,$GPUS_CSV,$N,$GPU_EXTRA_MB,$DUMP_S,$RESTORE_S,$CKPT_BYTES,$APP_CSV,$CKPT_DIR" >> "$METRICS_CSV"
 
 echo "GPU CRIUgpu test complete"
 echo "metrics: $METRICS_CSV"
