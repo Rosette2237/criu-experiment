@@ -4,6 +4,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+source scripts/criu_env.sh
+echo "CRIU_LIBDIR=$CRIU_LIBDIR"
+
 bash scripts/preflight.sh
 
 echo

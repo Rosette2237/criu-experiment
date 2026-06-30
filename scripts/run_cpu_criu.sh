@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+source "$(dirname "${BASH_SOURCE[0]}")/criu_env.sh"
+
 SUDO="${SUDO:-sudo}"
 N="${N:-512}"
 CPU_EXTRA_MB="${CPU_EXTRA_MB:-512}"
@@ -18,24 +20,36 @@ METRICS_CSV="results/cpu_criu_metrics.csv"
 mkdir -p results "$CKPT_DIR"
 make
 
-./build/cpu_matmul \
-  --n "$N" \
-  --iters 0 \
-  --extra-mb "$CPU_EXTRA_MB" \
-  --csv "$APP_CSV" \
+# Launch the workload fully detached from the terminal so CRIU sees no TTY:
+#   - setsid:        new session with no controlling terminal
+#   - fd-closing:    drop any fds inherited from the launching terminal
+#                    (e.g. a leaked /dev/ptmx master that breaks restore)
+#   - stdin/out/err: /dev/null and plain files (CRIU-safe)
+# setsid forks, so $! is the wrapper, not the workload. The exec'd process keeps
+# the inner shell's PID, so it records its own PID to PIDFILE for CRIU --tree.
+PIDFILE="$CKPT_DIR/workload.pid"
+setsid bash -c '
+  echo $$ > "$1"
+  for fd in /proc/self/fd/*; do
+    n=${fd##*/}
+    [ "$n" -gt 2 ] && eval "exec $n>&-"
+  done 2>/dev/null
+  exec ./build/cpu_matmul --n "$2" --iters 0 --extra-mb "$3" --csv "$4"
+' bash "$PIDFILE" "$N" "$CPU_EXTRA_MB" "$APP_CSV" \
   </dev/null \
   > "results/${RUN_ID}.stdout" \
   2> "results/${RUN_ID}.stderr" &
 
-PID=$!
+for _ in $(seq 1 50); do [ -s "$PIDFILE" ] && break; sleep 0.1; done
+PID="$(cat "$PIDFILE")"
 echo "Started CPU workload PID=$PID"
 sleep "$PRE_SECONDS"
 
 DUMP_START_NS="$(date +%s%N)"
 $SUDO criu dump \
-  --shell-job \
   --tree "$PID" \
   --images-dir "$CKPT_DIR" \
+  --libdir "$CRIU_LIBDIR" \
   -v4 \
   -o dump.log
 DUMP_END_NS="$(date +%s%N)"
@@ -44,13 +58,14 @@ RESTORE_START_NS="$(date +%s%N)"
 $SUDO criu restore \
   --restore-detached \
   --images-dir "$CKPT_DIR" \
+  --libdir "$CRIU_LIBDIR" \
   -v4 \
   -o restore.log
 RESTORE_END_NS="$(date +%s%N)"
 
 sleep "$POST_SECONDS"
 
-pkill -TERM -f "$ROOT/build/cpu_matmul" || true
+pkill -TERM -f "./build/cpu_matmul" || true
 sleep 1
 
 CKPT_BYTES="$(du -sb "$CKPT_DIR" | awk '{print $1}')"

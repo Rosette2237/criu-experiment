@@ -140,3 +140,14 @@ After each run, inspect:
 - `results/*_app.csv` — per-iteration application metrics
 - `~/criu-checkpoints/<run_id>/dump.log` — verbose CRIU dump log
 - `~/criu-checkpoints/<run_id>/restore.log` — verbose CRIU restore log
+- `~/criu-checkpoints/<run_id>/stats-dump` — binary CRIU dump statistics (freeze/frozen time, memory dump/write time, pages scanned/written)
+- `~/criu-checkpoints/<run_id>/stats-restore` — binary CRIU restore statistics (fork time, restore time, pages restored)
+
+The `stats-dump` and `stats-restore` files are CRIU image files. Decode them to JSON with CRIU's `crit` tool to inspect the internal phase timings (in microseconds) and page counts:
+
+```bash
+crit decode -i ~/criu-checkpoints/<run_id>/stats-dump
+crit decode -i ~/criu-checkpoints/<run_id>/stats-restore
+```
+
+The image files are owned by root (CRIU runs under `sudo`), so prefix with `sudo`. Add `--pretty` for indented output.
